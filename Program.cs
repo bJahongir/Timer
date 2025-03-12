@@ -1,13 +1,23 @@
 
 using Microsoft.EntityFrameworkCore;
 using Timer;
+using ActualLab.Fusion.UI;
+using ActualLab.Fusion;
+using ActualLab.Fusion.Blazor;
+using ActualLab.Fusion.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var fusion = builder.Services.AddFusion();
+fusion.AddBlazor();
+fusion.AddFusionTime();
+builder.Services.AddTransient<IUpdateDelayer>(c => new UpdateDelayer(c.UIActionTracker(), 0.1));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<TimerRepostory>();
+builder.Services.AddSingleton<TimerService>();
 
 
 
