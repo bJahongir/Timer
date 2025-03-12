@@ -1,4 +1,4 @@
-﻿@page "/";
+﻿@page "/"
 @using ActualLab.Fusion.Blazor
 @using ActualLab.Fusion.Extensions
 @inherits ComputedStateComponent<TimerState>
@@ -8,84 +8,192 @@
     var state = State.ValueOrDefault;
 }
 
-<h3>Timer</h3>
+<div class="timer-container">
+    <h2 class="timer-title">⏳Timer</h2>
 
-
-@if (state is not null)
-{
-
-    <div>
-        <label for="hourInput">Hours:</label>
-        <input id="hourInput" type="number" @bind="Hours" min="0" />
-
-        <label for="minuteInput">Minutes:</label>
-        <input id="minuteInput" type="number" @bind="Minutes" min="0" max="59" />
-
-        <label for="secondInput">Seconds:</label>
-        <input id="secondInput" type="number" @bind="Seconds" min="0" max="59" />
-
-        <button @onclick="StartTimer" disabled="@state.IsRunning">Start</button>
-        <button @onclick="PauseTimer" disabled="@(state.IsRunning == false)">Pause</button>
-    </div>
-
-    @if (state.FormattedTimeLeft is not null)
+    @if (state is not null)
     {
-        <p>Time left: @state.FormattedTimeLeft</p>
-    }
-    @if (state.StartedAt is not null)
-    {
-        <p>Started at: @state.StartedAt?.ToString("HH:mm:ss")</p>
-    }
-    @if (state.EndsAt is not null)
-    {
-        <p>Ends at: @state.EndsAt?.ToString("HH:mm:ss")</p>
-    }
-    @if (state.ProgressPercentage is not null)
-    {
-        <!-- Progress bar -->
-        <div class="progress-container">
-            <div class="progress-bar" style="width: @state.ProgressPercentage%;"></div>
+        <div class="input-group">
+            <div class="input-field">
+                <label for="hourInput">Hours:</label>
+                <input id="hourInput" type="number" @bind="Hours" min="0" class="input" />
+            </div>
+            <div class="input-field">
+                <label for="minuteInput">Minutes:</label>
+                <input id="minuteInput" type="number" @bind="Minutes" min="0" max="59" class="input" />
+            </div>
+            <div class="input-field">
+                <label for="secondInput">Seconds:</label>
+                <input id="secondInput" type="number" @bind="Seconds" min="0" max="59" class="input" />
+            </div>
         </div>
-    }
-    @if (state.TimerHistory is not null)
-    {
-        <h4>Timer History</h4>
-        <ul>
-            @foreach (var record in state.TimerHistory)
-            {
-                <li>Started: @(record.Start.Value.ToString("yyyy-MM-dd HH:mm:ss")
-               ), Ended: @(record.End.Value.ToString("yyyy-MM-dd HH:mm:ss")
-              )</li>
-            }
-        </ul>
-    }
 
+        <div class="button-group">
+            <button @onclick="StartTimer" disabled="@state.IsRunning" class="btn start">▶ Start</button>
+            <button @onclick="PauseTimer" disabled="@(state.IsRunning == false)" class="btn pause">⏸ Pause</button>
+        </div>
+
+        <div class="timer-info">
+            @if (state.FormattedTimeLeft is not null)
+            {
+                <p>⏲️ Time left: <span>@state.FormattedTimeLeft</span></p>
+            }
+            @if (state.StartedAt is not null)
+            {
+                <p>🟢 Started at: <span>@state.StartedAt?.ToString("HH:mm:ss")</span></p>
+            }
+            @if (state.EndsAt is not null)
+            {
+                <p>🔴 Ends at: <span>@state.EndsAt?.ToString("HH:mm:ss")</span></p>
+            }
+        </div>
+
+        @if (state.ProgressPercentage is not null)
+        {
+            <div class="progress-container">
+                <div class="progress-bar" style="width: @state.ProgressPercentage%;"></div>
+            </div>
+        }
+        @if (state.TimerHistory is not null)
+        {
+            <h3 class="history-title">📜 Timer History</h3>
+            <ul class="history-list">
+                @foreach (var record in state.TimerHistory)
+                {
+                    <li>🕒 Started: @(record.Start.Value.ToString("yyyy-MM-dd HH:mm:ss")) | ⏹ Ended: @(record.End.Value.ToString("yyyy-MM-dd HH:mm:ss"))</li>
+                }
+            </ul>
+        }
+    }
+</div>
 
 <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .timer-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .timer-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .input-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .input {
+        padding: 12px;
+        font-size: 1.1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+        .input:focus {
+            border-color: #4caf50;
+        }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .start {
+        background-color: #4caf50;
+    }
+
+    .pause {
+        background-color: #f44336;
+    }
+
+    .btn:disabled {
+        background-color: #bbb;
+        cursor: not-allowed;
+    }
+
+    .timer-info p {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .timer-info span {
+        font-weight: bold;
+    }
+
     .progress-container {
         width: 100%;
         background-color: #e0e0e0;
-        border-radius: 5px;
+        border-radius: 12px;
         margin: 20px 0;
         height: 30px;
+        overflow: hidden;
     }
 
     .progress-bar {
         height: 100%;
         background-color: #4caf50;
-        text-align: center;
-        line-height: 30px;
-        color: white;
-        border-radius: 5px;
         transition: width 0.5s ease-in-out;
     }
+
+    .history-title {
+        text-align: center;
+        font-size: 1.8rem;
+        margin-top: 30px;
+    }
+
+    .history-list {
+        list-style: none;
+        padding: 0;
+    }
+
+        .history-list li {
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
 </style>
 
 @code {
     private int Hours = 0;
     private int Minutes = 0;
     private int Seconds = 0;
-
 
     protected override async Task<TimerState> ComputeState(CancellationToken cancellationToken)
     {
@@ -97,12 +205,8 @@
     {
         await service.StartTimer(Hours, Minutes, Seconds);
     }
-
     private async Task PauseTimer()
     {
         await service.PauseTimer();
     }
 }
-}
-
-

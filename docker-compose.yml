@@ -1,0 +1,30 @@
+﻿version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: timer_postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 7779
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  blazor-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: timer
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=7779;applicationname=TimerApp;
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
